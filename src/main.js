@@ -12,13 +12,6 @@ import { saveFileToKVS, saveCSVToKVS } from './reporters/storage.js';
 
 await Actor.init();
 
-// ========== ENVIRONMENT ==========
-
-const DOC2CV_PROXY_SECRET = process.env.DOC2CV_PROXY_SECRET;
-if (!DOC2CV_PROXY_SECRET) {
-  throw new Error('DOC2CV_PROXY_SECRET environment variable is missing.');
-}
-
 // ========== INPUT ==========
 
 const input = await Actor.getInput();
@@ -82,7 +75,7 @@ console.log(`[TABLES] Document types detected: ${Object.keys(tables).join(', ') 
 let profile = '';
 if (useProfileTransformer) {
   console.log('[PROFILE] Calling Profile Transformer via stech-api...');
-  profile = await callProfileTransformer(structuredData, DOC2CV_PROXY_SECRET, timeout);
+  profile = await callProfileTransformer(structuredData, timeout);
   if (profile) {
     console.log(`[PROFILE] Generated (${profile.length} chars).`);
   } else {
@@ -112,17 +105,17 @@ for (const [type, csvContent] of Object.entries(tables)) {
 // ========== STEP 8: AUDIT HASH & OUTPUT ==========
 
 const timestamp = new Date().toISOString();
-const allText = rawResults.map(r => r.text).join('|');
+const allText  = rawResults.map(r => r.text).join('|');
 const auditHash = crypto.createHash('sha256').update(`${allText}|${timestamp}`).digest('hex');
 
 await Actor.pushData({
-  download_docx: docxUrl,
-  download_pdf: pdfUrl,
-  tables: csvUrls,
-  profile: profile || '',
-  pagesProcessed: pages.length,
-  documentsDetected: Object.keys(tables),
-  status: 'success',
+  download_docx:      docxUrl,
+  download_pdf:       pdfUrl,
+  tables:             csvUrls,
+  profile:            profile || '',
+  pagesProcessed:     pages.length,
+  documentsDetected:  Object.keys(tables),
+  status:             'success',
   timestamp,
   auditHash,
 });
