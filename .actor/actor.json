@@ -1,17 +1,16 @@
 {
   "actorSpecification": 1,
-  "name": "doc2cv",
-  "title": "Doc2CV – Document to CV Converter",
-  "description": "Upload up to 10 document files (PDF/images). Extracts text and tables via OCR, detects profile photo, and generates a ready-to-download CV in DOCX and PDF format.",
-  "version": "0.1",
+  "name": "Doc2CV – Document to CV Converter",
+  "version": "0.1.0",
   "buildTag": "latest",
-  "environmentVariables": {
-    "CLOUDFLARE_ACCOUNT_ID": {
-      "description": "Cloudflare Account ID for Workers AI"
-    },
-    "CLOUDFLARE_API_TOKEN": {
-      "description": "Cloudflare API Token for Workers AI"
-    }
+  "description": "Upload up to 10 document files (PDF, JPG, PNG) such as diplomas, transcripts, ID cards, and certificates. Doc2CV extracts text and tables via Tesseract OCR, detects and crops the profile photo, optionally generates a professional profile summary via Cloudflare Workers AI, and produces a ready-to-download CV in both DOCX and PDF formats.",
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
   },
-  "dockerfile": "./Dockerfile"
+  "seo": {
+    "name": "Doc2CV – Automated Document to CV Converter",
+    "description": "Turn scanned diplomas, transcripts, ID cards, and certificates into a ready-to-download CV in DOCX and PDF. Tesseract OCR extracts text, tables are parsed per document type, and an optional AI profile summary is generated. No typing required."
+  }
 }
