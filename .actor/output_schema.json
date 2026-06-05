@@ -2,16 +2,28 @@
   "title": "Doc2CV Output",
   "properties": {
     "download_docx": {
-      "title": "Link DOCX CV",
+      "title": "DOCX CV Download Link",
       "type": "string"
     },
     "download_pdf": {
-      "title": "Link PDF CV",
+      "title": "PDF CV Download Link",
       "type": "string"
     },
     "tables": {
-      "title": "Tabel Hasil Ekstraksi (CSV per jenis dokumen)",
+      "title": "Extracted Data Tables (CSV per document type)",
       "type": "object"
+    },
+    "profile": {
+      "title": "Generated Professional Profile",
+      "type": "string"
+    },
+    "pagesProcessed": {
+      "title": "Number of pages processed",
+      "type": "integer"
+    },
+    "documentsDetected": {
+      "title": "Document types detected",
+      "type": "array"
     }
   }
 }
