@@ -1,29 +1,67 @@
 {
-  "title": "Doc2CV Output",
+  "actorOutputSchemaVersion": 1,
+  "title": "Doc2CV Result",
   "properties": {
     "download_docx": {
-      "title": "DOCX CV Download Link",
-      "type": "string"
+      "type": "string",
+      "title": "Download DOCX",
+      "description": "Public URL to download the generated CV as a Microsoft Word (.docx) file.",
+      "template": "{{download_docx}}"
     },
     "download_pdf": {
-      "title": "PDF CV Download Link",
-      "type": "string"
+      "type": "string",
+      "title": "Download PDF",
+      "description": "Public URL to download the generated CV as a PDF file.",
+      "template": "{{download_pdf}}"
     },
     "tables": {
-      "title": "Extracted Data Tables (CSV per document type)",
-      "type": "object"
+      "type": "object",
+      "title": "Extracted Data Tables",
+      "description": "Object mapping each detected document type (e.g. id_card, diploma, transcript, certificate) to a public URL for its CSV file.",
+      "template": "{{tables}}"
     },
     "profile": {
-      "title": "Generated Professional Profile",
-      "type": "string"
+      "type": "string",
+      "title": "Professional Profile",
+      "description": "AI-generated professional profile summary paragraph, produced by Cloudflare Workers AI from the extracted document data. Empty string if useProfileTransformer is false.",
+      "template": "{{profile}}"
     },
     "pagesProcessed": {
-      "title": "Number of pages processed",
-      "type": "integer"
+      "type": "integer",
+      "title": "Pages Processed",
+      "description": "Total number of pages or images processed by the OCR engine.",
+      "template": "{{pagesProcessed}}"
     },
     "documentsDetected": {
-      "title": "Document types detected",
-      "type": "array"
+      "type": "array",
+      "title": "Document Types Detected",
+      "description": "List of document type keys detected across all uploaded files (e.g. ['id_card', 'diploma', 'transcript']).",
+      "template": "{{documentsDetected}}"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "description": "Processing status: 'success' or 'error'.",
+      "template": "{{status}}"
+    },
+    "timestamp": {
+      "type": "string",
+      "title": "Timestamp",
+      "description": "ISO 8601 timestamp of when the run completed.",
+      "template": "{{timestamp}}"
+    },
+    "auditHash": {
+      "type": "string",
+      "title": "Audit Hash",
+      "description": "SHA-256 hash of the extracted text content combined with the timestamp, for audit trail purposes.",
+      "template": "{{auditHash}}"
     }
-  }
+  },
+  "required": [
+    "download_docx",
+    "download_pdf",
+    "tables",
+    "status",
+    "auditHash"
+  ]
 }
