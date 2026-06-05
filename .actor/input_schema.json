@@ -1,0 +1,39 @@
+{
+  "title": "Doc2CV Input",
+  "description": "Upload file dokumen (maks. 10 file) untuk diekstrak menjadi CV.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "files": {
+      "title": "File Dokumen",
+      "description": "URL publik file PDF atau gambar (JPG, PNG). Maksimal 10 file.",
+      "type": "array",
+      "editor": "stringList",
+      "maxItems": 10,
+      "example": [
+        "https://example.com/ijazah.pdf",
+        "https://example.com/ktp.jpg"
+      ]
+    },
+    "language": {
+      "title": "Bahasa Dokumen",
+      "description": "Bahasa utama dokumen untuk OCR.",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "ind",
+        "eng"
+      ],
+      "default": "ind"
+    },
+    "useProfileTransformer": {
+      "title": "Gunakan Profile Transformer (LLM)",
+      "description": "Aktifkan untuk mengisi kolom Profile ringkasan profesional via Cloudflare Workers AI.",
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "files"
+  ]
+}
