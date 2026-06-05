@@ -1,36 +1,53 @@
 {
-  "title": "Doc2CV Input",
-  "description": "Upload document files (max 10) to generate a CV.",
+  "title": "Doc2CV – Document to CV Converter",
+  "description": "Upload up to 10 document files (PDF or images) to automatically generate a ready-to-download CV. Supports diplomas, transcripts, ID cards, certificates, and profile photos.",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
     "files": {
-      "title": "Document Files",
-      "description": "Public URLs of PDF or image files (JPG, PNG). Maximum 10 files.",
+      "title": "Document Files (URLs)",
       "type": "array",
+      "description": "Provide public URLs of your document files. Supported formats: PDF, JPG, PNG. Maximum 10 files per run. Each file will be processed individually — PDFs are split into per-page images before OCR.",
       "editor": "stringList",
       "maxItems": 10,
-      "example": [
+      "prefill": [
         "https://example.com/diploma.pdf",
         "https://example.com/id_card.jpg"
-      ]
+      ],
+      "items": {
+        "type": "string",
+        "title": "File URL",
+        "description": "A publicly accessible URL to a PDF or image file."
+      }
     },
     "language": {
       "title": "Document Language",
-      "description": "Primary language of the documents for OCR.",
       "type": "string",
+      "description": "Primary language of the documents. Used to configure the Tesseract OCR engine. Choose 'ind' for Indonesian documents (default) or 'eng' for English-language documents.",
       "editor": "select",
       "enum": [
         "ind",
         "eng"
       ],
+      "enumTitles": [
+        "Indonesian (ind)",
+        "English (eng)"
+      ],
       "default": "ind"
     },
     "useProfileTransformer": {
-      "title": "Enable Profile Transformer (LLM)",
-      "description": "When enabled, calls Cloudflare Workers AI to generate a professional profile summary.",
+      "title": "Enable Profile Transformer (AI Summary)",
       "type": "boolean",
+      "description": "When enabled, Doc2CV calls the stech-api Cloudflare Worker which uses Cloudflare Workers AI (Llama 3.3 70B) to read all extracted data and write a concise professional profile paragraph for the 'Profile' section of the CV.",
       "default": true
+    },
+    "timeout": {
+      "title": "Timeout (seconds)",
+      "type": "integer",
+      "description": "Maximum wait time in seconds for each request to the Profile Transformer API.",
+      "minimum": 10,
+      "maximum": 300,
+      "default": 60
     }
   },
   "required": [
