@@ -2,29 +2,32 @@
 // Calls the /doc2cv endpoint on the stech-api Cloudflare Worker.
 // The Worker uses Cloudflare Workers AI (Llama 3.3 70B) to generate
 // a professional profile summary from the extracted document data.
+// Authenticated via X-Doc2CV-Actor-Secret header.
 
-const WORKER_URL = 'https://stech-api.sheradogilang.workers.dev/doc2cv';
+import axios from 'axios';
 
-export async function callProfileTransformer(structuredData) {
+const API_URL = 'https://stech-api.sheradogilang.workers.dev/doc2cv';
+
+export async function callProfileTransformer(structuredData, proxySecret, timeout = 60) {
+  const payload = {
+    nama: structuredData.name || '',
+    pendidikan: structuredData.education.map(e => e.detail).join(' | '),
+    sertifikasi: structuredData.certifications.map(c => c.detail).join(' | '),
+    mataKuliah: structuredData.courses.slice(0, 20),
+    ipk: structuredData.gpa || '',
+    skill: structuredData.skills || [],
+  };
+
   try {
-    const payload = {
-      nama: structuredData.name,
-      pendidikan: structuredData.education.map(e => e.detail).join(' | '),
-      sertifikasi: structuredData.certifications.map(c => c.detail).join(' | '),
-      mataKuliah: structuredData.courses.slice(0, 20),
-      ipk: structuredData.gpa,
-      skill: structuredData.skills
-    };
-
-    const res = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+    const response = await axios.post(API_URL, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Doc2CV-Actor-Secret': proxySecret,
+      },
+      timeout: timeout * 1000,
     });
 
-    if (!res.ok) { console.warn(`[PROFILE] Worker responded with ${res.status}`); return ''; }
-    const json = await res.json();
-    return json.profile || json.response || '';
+    return response.data.profile || response.data.response || '';
   } catch (err) {
     console.warn(`[PROFILE] Failed to call Profile Transformer: ${err.message}`);
     return '';
