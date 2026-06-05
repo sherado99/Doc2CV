@@ -1,66 +1,56 @@
 // src/reporters/docx.js
-import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, ImageRun, Table, TableRow, TableCell, WidthType, BorderStyle } from 'docx';
+import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, ImageRun } from 'docx';
 import { readFileSync, existsSync } from 'fs';
 
-export async function generateDOCX(data, profile = '', pasFotoPath = null) {
+export async function generateDOCX(data, profile = '', profilePhotoPath = null) {
   const children = [];
 
-  // Header: Nama
   children.push(new Paragraph({
-    children: [new TextRun({ text: data.nama || 'Nama Tidak Terdeteksi', bold: true, size: 36 })],
+    children: [new TextRun({ text: data.name || 'Name Not Detected', bold: true, size: 36 })],
     alignment: AlignmentType.CENTER,
     spacing: { after: 80 }
   }));
 
-  // Info dasar
-  if (data.ttl) children.push(new Paragraph({ text: `Tempat/Tgl Lahir: ${data.ttl}`, spacing: { after: 40 } }));
-  if (data.alamat) children.push(new Paragraph({ text: `Alamat: ${data.alamat}`, spacing: { after: 40 } }));
-  if (data.nik) children.push(new Paragraph({ text: `NIK: ${data.nik}`, spacing: { after: 120 } }));
+  if (data.dob)     children.push(new Paragraph({ text: `Date of Birth: ${data.dob}`, spacing: { after: 40 } }));
+  if (data.address) children.push(new Paragraph({ text: `Address: ${data.address}`, spacing: { after: 40 } }));
+  if (data.nik)     children.push(new Paragraph({ text: `ID Number: ${data.nik}`, spacing: { after: 120 } }));
 
-  // Profile / Ringkasan Profesional
   if (profile) {
-    children.push(new Paragraph({ text: 'PROFIL PROFESIONAL', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
+    children.push(new Paragraph({ text: 'PROFESSIONAL PROFILE', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
     children.push(new Paragraph({ text: profile, spacing: { after: 120 } }));
   }
 
-  // Pendidikan
-  if (data.pendidikan?.length > 0) {
-    children.push(new Paragraph({ text: 'RIWAYAT PENDIDIKAN', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
-    data.pendidikan.forEach(p => {
-      children.push(new Paragraph({ text: `• ${p.detail.substring(0, 200)}`, spacing: { after: 40 } }));
-    });
+  if (data.education?.length > 0) {
+    children.push(new Paragraph({ text: 'EDUCATION', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
+    data.education.forEach(e => children.push(new Paragraph({ text: `• ${e.detail.substring(0, 200)}`, spacing: { after: 40 } })));
   }
 
-  // Transkrip / IPK
-  if (data.ipk) {
-    children.push(new Paragraph({ text: `IPK: ${data.ipk}`, spacing: { before: 80, after: 40 } }));
-  }
-  if (data.mataKuliah?.length > 0) {
-    children.push(new Paragraph({ text: 'MATA KULIAH RELEVAN', heading: HeadingLevel.HEADING_3, spacing: { before: 120, after: 60 } }));
-    data.mataKuliah.slice(0, 15).forEach(mk => {
-      children.push(new Paragraph({ text: `• ${mk['Mata Kuliah']} — ${mk['Nilai']} (${mk['SKS']} SKS)`, spacing: { after: 30 } }));
-    });
+  if (data.gpa) children.push(new Paragraph({ text: `GPA: ${data.gpa}`, spacing: { before: 80, after: 40 } }));
+
+  if (data.courses?.length > 0) {
+    children.push(new Paragraph({ text: 'RELEVANT COURSES', heading: HeadingLevel.HEADING_3, spacing: { before: 120, after: 60 } }));
+    data.courses.slice(0, 15).forEach(c => children.push(new Paragraph({ text: `• ${c.Course} — ${c.Grade} (${c.Credits} credits)`, spacing: { after: 30 } })));
   }
 
-  // Sertifikasi
-  if (data.sertifikasi?.length > 0) {
-    children.push(new Paragraph({ text: 'SERTIFIKASI', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
-    data.sertifikasi.forEach(s => {
-      children.push(new Paragraph({ text: `• ${s.detail.substring(0, 200)}`, spacing: { after: 40 } }));
-    });
+  if (data.certifications?.length > 0) {
+    children.push(new Paragraph({ text: 'CERTIFICATIONS', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
+    data.certifications.forEach(c => children.push(new Paragraph({ text: `• ${c.detail.substring(0, 200)}`, spacing: { after: 40 } })));
   }
 
-  // Pas foto (pojok kanan atas jika ada)
+  if (data.skills?.length > 0) {
+    children.push(new Paragraph({ text: 'SKILLS', heading: HeadingLevel.HEADING_2, spacing: { before: 160, after: 60 } }));
+    children.push(new Paragraph({ text: data.skills.join(' • '), spacing: { after: 40 } }));
+  }
+
   const sectionChildren = [...children];
-  if (pasFotoPath && existsSync(pasFotoPath)) {
+  if (profilePhotoPath && existsSync(profilePhotoPath)) {
     try {
-      const imgBuffer = readFileSync(pasFotoPath);
       sectionChildren.unshift(new Paragraph({
-        children: [new ImageRun({ data: imgBuffer, transformation: { width: 100, height: 130 } })],
+        children: [new ImageRun({ data: readFileSync(profilePhotoPath), transformation: { width: 100, height: 130 } })],
         alignment: AlignmentType.RIGHT,
         spacing: { after: 80 }
       }));
-    } catch {}
+    } catch (err) { console.warn(`[DOCX] Could not embed photo: ${err.message}`); }
   }
 
   const doc = new Document({ sections: [{ properties: {}, children: sectionChildren }] });
