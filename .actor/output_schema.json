@@ -1,0 +1,17 @@
+{
+  "title": "Doc2CV Output",
+  "properties": {
+    "download_docx": {
+      "title": "Link DOCX CV",
+      "type": "string"
+    },
+    "download_pdf": {
+      "title": "Link PDF CV",
+      "type": "string"
+    },
+    "tables": {
+      "title": "Tabel Hasil Ekstraksi (CSV per jenis dokumen)",
+      "type": "object"
+    }
+  }
+}
