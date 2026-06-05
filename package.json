@@ -1,14 +1,14 @@
 {
-  "name": "doc2cv",
+  "name": "Doc2CV – Document to CV Converter",
   "version": "0.1.0",
-  "description": "Apify Actor: Dokumen ke CV otomatis",
   "type": "module",
-  "main": "src/main.js",
+  "description": "Apify Actor: converts scanned documents (diplomas, transcripts, ID cards, certificates) into a ready-to-download CV in DOCX and PDF format.",
   "scripts": {
     "start": "node src/main.js"
   },
   "dependencies": {
-    "apify": "^3.3.4",
+    "apify": "^3.1.0",
+    "axios": "^1.6.0",
     "docx": "^8.5.0",
     "pdfkit": "^0.15.0",
     "node-tesseract-ocr": "^2.2.1",
