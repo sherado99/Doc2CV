@@ -1,18 +1,18 @@
 // src/utils/profileTransformer.js
-// Memanggil endpoint /doc2cv pada stech-api Cloudflare Worker
-// Worker menggunakan Cloudflare Workers AI (Llama) untuk merangkum data menjadi narasi profil CV
+// Calls the /doc2cv endpoint on the stech-api Cloudflare Worker,
+// which uses Cloudflare Workers AI (Llama 3.3 70B) to generate a professional profile summary.
 
 const WORKER_URL = 'https://stech-api.sheradogilang.workers.dev/doc2cv';
 
 export async function callProfileTransformer(structuredData) {
   try {
     const payload = {
-      nama: structuredData.nama,
-      pendidikan: structuredData.pendidikan.map(p => p.detail).join(' | '),
-      sertifikasi: structuredData.sertifikasi.map(s => s.detail).join(' | '),
-      mataKuliah: structuredData.mataKuliah.slice(0, 20),
-      ipk: structuredData.ipk,
-      skill: structuredData.skill
+      nama: structuredData.name,
+      pendidikan: structuredData.education.map(e => e.detail).join(' | '),
+      sertifikasi: structuredData.certifications.map(c => c.detail).join(' | '),
+      mataKuliah: structuredData.courses.slice(0, 20),
+      ipk: structuredData.gpa,
+      skill: structuredData.skills
     };
 
     const res = await fetch(WORKER_URL, {
@@ -29,7 +29,7 @@ export async function callProfileTransformer(structuredData) {
     const json = await res.json();
     return json.profile || json.response || '';
   } catch (err) {
-    console.warn(`[PROFILE] Gagal memanggil Profile Transformer: ${err.message}`);
+    console.warn(`[PROFILE] Failed to call Profile Transformer: ${err.message}`);
     return '';
   }
 }
