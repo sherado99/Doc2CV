@@ -1,0 +1,141 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "download_docx": {
+        "type": "string",
+        "title": "Download DOCX",
+        "description": "Public URL to download the generated CV as a Microsoft Word (.docx) file.",
+        "example": "https://api.apify.com/v2/key-value-stores/STORE_ID/records/CV_Output.docx?disableRedirect=true"
+      },
+      "download_pdf": {
+        "type": "string",
+        "title": "Download PDF",
+        "description": "Public URL to download the generated CV as a PDF file.",
+        "example": "https://api.apify.com/v2/key-value-stores/STORE_ID/records/CV_Output.pdf?disableRedirect=true"
+      },
+      "tables": {
+        "type": "object",
+        "title": "Extracted Data Tables",
+        "description": "Object mapping each detected document type to a public CSV download URL.",
+        "example": {
+          "id_card": "https://api.apify.com/v2/key-value-stores/STORE_ID/records/id_card.csv?disableRedirect=true",
+          "transcript": "https://api.apify.com/v2/key-value-stores/STORE_ID/records/transcript.csv?disableRedirect=true"
+        }
+      },
+      "profile": {
+        "type": "string",
+        "title": "Professional Profile",
+        "description": "AI-generated professional profile summary paragraph.",
+        "example": "Budi Santoso is a graduate of Computer Science at Universitas Indonesia with a GPA of 3.75, holding an AWS Certified Developer certification and proficient in Python and JavaScript."
+      },
+      "pagesProcessed": {
+        "type": "integer",
+        "title": "Pages Processed",
+        "description": "Total number of pages or images processed by the OCR engine.",
+        "example": 5
+      },
+      "documentsDetected": {
+        "type": "array",
+        "title": "Document Types Detected",
+        "description": "List of document type keys detected across all uploaded files.",
+        "example": [
+          "id_card",
+          "diploma",
+          "transcript",
+          "certificate"
+        ]
+      },
+      "status": {
+        "type": "string",
+        "title": "Status",
+        "description": "Processing status of the run.",
+        "enum": [
+          "success",
+          "error"
+        ],
+        "example": "success"
+      },
+      "timestamp": {
+        "type": "string",
+        "title": "Timestamp",
+        "description": "ISO 8601 timestamp of when the run completed.",
+        "example": "2026-06-05T10:30:00.000Z"
+      },
+      "auditHash": {
+        "type": "string",
+        "title": "Audit Hash",
+        "description": "SHA-256 hash of extracted text content combined with the timestamp.",
+        "example": "a3f2b8c9d1e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9"
+      }
+    },
+    "required": [
+      "download_docx",
+      "download_pdf",
+      "tables",
+      "status",
+      "auditHash"
+    ]
+  },
+  "views": {
+    "overview": {
+      "title": "Doc2CV Results",
+      "transformation": {
+        "fields": [
+          "status",
+          "timestamp",
+          "download_docx",
+          "download_pdf",
+          "tables",
+          "profile",
+          "pagesProcessed",
+          "documentsDetected",
+          "auditHash"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "status": {
+            "label": "Status",
+            "format": "text"
+          },
+          "timestamp": {
+            "label": "Timestamp",
+            "format": "text"
+          },
+          "download_docx": {
+            "label": "Download DOCX",
+            "format": "text"
+          },
+          "download_pdf": {
+            "label": "Download PDF",
+            "format": "text"
+          },
+          "tables": {
+            "label": "CSV Tables",
+            "format": "text"
+          },
+          "profile": {
+            "label": "Profile",
+            "format": "text"
+          },
+          "pagesProcessed": {
+            "label": "Pages Processed",
+            "format": "text"
+          },
+          "documentsDetected": {
+            "label": "Docs Detected",
+            "format": "text"
+          },
+          "auditHash": {
+            "label": "Audit Hash",
+            "format": "text"
+          }
+        }
+      }
+    }
+  }
+}
