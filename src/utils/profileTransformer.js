@@ -1,16 +1,15 @@
 // src/utils/profileTransformer.js
 // Builds a professional CV profile prompt from the structured data extracted
 // by the actor (OCR + tableBuilder), then calls the stech-api Cloudflare Worker
-// endpoint at /doc2cv. The worker's only job is to forward { message } to
-// Cloudflare Workers AI (Llama 3.3 70B) and return { response }.
-// This mirrors the same pattern used by SPDET and SCDFT actors.
+// endpoint at /doc2cv. The worker forwards { message } to Cloudflare Workers AI
+// (Llama 3.3 70B) and returns { response }.
+// This is the same pattern used by SPDET and SCDFT actors.
 
 import axios from 'axios';
 
 const API_URL = 'https://stech-api.sheradogilang.workers.dev/doc2cv';
 
-export async function callProfileTransformer(structuredData, proxySecret, timeout = 60) {
-  // Build the full prompt here in the actor — the worker only forwards it to the AI.
+export async function callProfileTransformer(structuredData, timeout = 60) {
   const name         = structuredData.name || '-';
   const gpa          = structuredData.gpa  || '-';
   const education    = structuredData.education.length > 0
@@ -41,10 +40,7 @@ Data:
       API_URL,
       { message },
       {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Doc2CV-Actor-Secret': proxySecret,
-        },
+        headers: { 'Content-Type': 'application/json' },
         timeout: timeout * 1000,
       }
     );
