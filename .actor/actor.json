@@ -1,0 +1,17 @@
+{
+  "actorSpecification": 1,
+  "name": "doc2cv",
+  "title": "Doc2CV – Dokumen ke CV Otomatis",
+  "description": "Upload hingga 10 file dokumen (PDF/gambar), ekstrak teks & tabel otomatis, lalu unduh CV siap kirim dalam format DOCX dan PDF.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "environmentVariables": {
+    "CLOUDFLARE_ACCOUNT_ID": {
+      "description": "Cloudflare Account ID untuk Workers AI"
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "description": "Cloudflare API Token untuk Workers AI"
+    }
+  },
+  "dockerfile": "./Dockerfile"
+}
