@@ -1,6 +1,7 @@
 // src/utils/profileTransformer.js
-// Calls the /doc2cv endpoint on the stech-api Cloudflare Worker,
-// which uses Cloudflare Workers AI (Llama 3.3 70B) to generate a professional profile summary.
+// Calls the /doc2cv endpoint on the stech-api Cloudflare Worker.
+// The Worker uses Cloudflare Workers AI (Llama 3.3 70B) to generate
+// a professional profile summary from the extracted document data.
 
 const WORKER_URL = 'https://stech-api.sheradogilang.workers.dev/doc2cv';
 
@@ -21,11 +22,7 @@ export async function callProfileTransformer(structuredData) {
       body: JSON.stringify(payload)
     });
 
-    if (!res.ok) {
-      console.warn(`[PROFILE] Worker error: ${res.status}`);
-      return '';
-    }
-
+    if (!res.ok) { console.warn(`[PROFILE] Worker responded with ${res.status}`); return ''; }
     const json = await res.json();
     return json.profile || json.response || '';
   } catch (err) {
